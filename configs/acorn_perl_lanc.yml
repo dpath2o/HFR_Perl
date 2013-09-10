@@ -1,0 +1,17 @@
+---
+header :
+ radial :
+  time :
+   output_interval : 3600
+
+extra :
+ wave :
+  time :
+   output_interval : 2678400
+ diagnostics :
+  time :
+   output_interval : 604800
+
+cspro :
+ time :
+  averaging_period : 1200

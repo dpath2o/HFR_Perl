@@ -1,0 +1,299 @@
+---
+misc :
+ use_imos: 1
+ use_qc  : 0
+ verbose : 1
+ debug   : 0
+
+globals :
+ seasonde_vector_directory : &seasonde_vector_directory
+  - sea-state
+
+codenames :
+ sos                    : 
+ site                   :
+ all                    : [ghed, crvt, sbrd, turq, gui, fre, rot, cwi, csp, sag, nocr, bfcv, bonc, nnb, rrk, cof, lei, tan, cbg]
+ stations               : [ghed, crvt, lanc, sbrd, gui, fre, cwi, csp, nocr, bfcv, nnb, rrk, lei, tan]
+ sites                  : [turq, rot, sag, bonc, cof, cbg]
+ wera_all               : [gui, fre, rot, cwi, csp, sag, nnb, rrk, cof, lei, tan, cbg]
+ wera_stations          : [gui, fre, cwi, csp, nnb, rrk, lei, tan]
+ wera_sites             : [rot, sag, cof, cbg]
+ wera_t_off_5           : [fre, csp, nnb, lei]
+ codar_all              : [ghed, crvt, lanc, sbrd, turq, nocr, bfcv, bonc]
+ codar_stations         : [ghed, crvt, lanc, sbrd, nocr, bfcv]
+ codar_sites            : [turq, bonc]
+ turquoise_coast        : turq
+ green_head             : ghed
+ cervantes              : crvt
+ lancelin               : lanc
+ seabird                : sbrd
+ rottnest_island        : rot
+ fremantle              : fre
+ guilderton             : gui
+ south_australia_gulf   : sag
+ cape_wiles             : cwi
+ cape_spencer           : csp
+ bonney_coast           : bonc
+ nora_creina            : nocr
+ blackfellows_caves     : bfcv
+ coffs_harbour          : cof
+ north_nambucca         : nnb
+ red_rock               : rrk
+ capricorn_bunker_group : cbg
+ lady_elliot_island     : lei
+ tannum_sands           : tan
+
+time :
+ start :
+ stop  :
+ dt    :
+ DateTime :
+  year   : 1904
+  month  : 1
+  day    : 1
+  hour   : 0
+  minute : 0
+  second : 0
+  zone   : UTC
+  Epoch :
+   unit              : seconds
+   type              : int
+   skip_leap_seconds : 1
+   start_at          : 0
+   local_epoch       : undef
+
+tolerances :
+ data_to_grid_distance : 1 #km
+
+flags :
+ site_badval : 9999
+
+coverages :
+ data :
+ dt   : 7 #days
+ files : 
+  data_filename : coverage_data.xyz
+  full_path     :
+  figure        :
+
+grid :
+ xi         :
+ yi         :
+ longitudes :
+ latitudes  :
+ files :
+  primary    :
+  tmp_ss_rad : temporary_seasonde_radial_file.txt
+
+gmt :
+ use_predefined_region : 1
+ bin_directory         : /usr/local/bin
+ files :
+  suffix        : eps
+  defaults      : /volumes/data/.gmt/gmt.conf
+  coverage_cpt  : coverages.cpt
+  vector_cpt    : vec_1.5max.cpt
+  bathymetry    : ETOPO1_Bed_g_gmt4.grd
+  bath_cpt      : bath.cpt
+  topography    : l.grd
+  topo_cpt      : topo.cpt
+  illumination  : l_i12.grd
+  speed_scale   : speed_scale.ps
+  jcu_logo      : JCU_logo.ps
+  acorn_icon    : acorn_icon.eps
+  temporary :
+   xyz_text    : xyz.txt
+   xyz_bin     : xyz.bin
+   vec_text    : vec.xyz
+   vec_grid    : vec.grd
+   mask        : tmp.mask
+   legend      : legend.txt
+   arrow_scale : arrow_scale.txt
+ figures :
+  projection       : 
+  page_offset      : '-X8.5c -Y6c'
+  page_orientation : landscape
+  ps_media         : a2
+  font_annot_prime : '20p,Palatino-Bold'
+  font_annot_secnd : '22p,Palatino-Bold'
+  frame            : -B1g1f15m
+  circles          : -Sc0.25c
+  arrows           : -Svt0.1c/0.15c/0.2cn0.1c
+  arrow_fill_color : -Gblue
+  arrow_border     : -W-
+  scale_string     : '-B0.5:\"Speed\":/:\"m/s\":'
+  vector_squares   : -Ss1.5c
+  contours         : -C100
+  scale_position   : 
+  legend_region    : -R
+  legend_position  : -D17c/8c/15c/1c/TC
+  legend_size      : -J
+  title_region     : -R0/20/0/20
+  title_size       : -JX30c
+ regions :
+  current : 
+  turq    : -R113/115.75/-32.1/-29.9
+  rot     : -R113/116.0/-33/-30
+  sag     : -R134.75/137.25/-36.75/-34.75
+  bonc    : -R138/141/-39.5/-37
+  cof     : -R153/155/-31.5/-29.5
+  cbg     : -R151.1/153.1/-24.25/-22.5
+
+goanna_server :
+ hostname   : &goanna
+  - goanna.jcu.edu.au
+ ip4address : 137.219.45.12
+
+NSCA :
+  encryption_type : xor
+  remote_host     : *goanna
+  service         : 'ACORN - data transfer'
+
+acorn_server :
+ hostname                  : acorn.jcu.edu.au
+ user                      : acorn
+ ssh_key                   : /users/codar/.ssh/id_rsa
+ base_staging_directory    : /acorn/data/archive/real-time/staging
+ base_incoming_directory   : /acorn/data/archive/real-time/incoming/radial
+ seasonde_vector_directory : *seasonde_vector_directory
+
+local_server :
+ hostname : seasonde.jcu.edu.au
+ user     : codar
+ ssh_key  : /users/codar/.ssh/id_rsa
+ directories :
+  base    : /volumes/data
+  data    : /volumes/data/hfr
+  configs : /volumes/data/etc/acorn
+  log     : /volumes/data/logs/acorn
+  gmt     : /volumes/data/.gmt
+  tmp     : /volumes/data/tmp/data
+  perl_bin: /volumes/data/gd/src/perl
+  figures : 
+   base    : /volumes/data/figs/acorn
+   current : 
+
+
+imos_data_portal :
+ url_base                    : http://thredds.aodn.org.au/thredds/dodsC/IMOS/ACORN
+ suffix                      : html
+ wera_vector_directory_qc    : gridded_1h-avg-current-map_QC
+ wera_vector_directory_nonqc : gridded_1h-avg-current-map_non-QC
+ seasonde_vector_directory   : vector
+ station_directory_qc        : radial_quality_controlled
+ station_directory_nonqc     : radial
+ directory_structure         : symd
+ filename                    :
+ list_of_filenames           :
+
+ncf :
+ prefix                : imos_acorn
+ suffix                : nc
+ suffix_url            : html
+ radial_data_version   : rv
+ vector_data_version   : v
+ version_qc            : fv01
+ version_nonqc         : fv00
+ radial_data_type      : radial
+ cos_vector_data_type  : sea-state
+ wera_vector_data_type : 1-hour-avg
+ time                  :
+ year                  :
+ month                 :
+ day                   :
+ base_directory        :
+ filename              :
+ url_filename          :
+ list_of_files         :
+ list_of_files_url     :
+
+codar :
+ suffixes :
+  all           : [cs, ts, rs, ruv, rdt, hdt, tuv, sdt, xdt, wls]
+  time_series   : ts
+  range_series  : rs
+  spectra       : cs
+  radial        : ruv
+  waves         : wls
+  vectors       : tuv
+  diagnostics :
+   radial     : rdt
+   hardware   : hdt
+   spectra    : xdt
+   range      : sdt
+ prefixes :
+  time_series   : lvl
+  range_series  : rng
+  spectra       : cs
+  diagnostics   : stat
+  waves         : wvlm
+  vectors       : totl
+  radials       : rdl
+  radial : 
+   merged : 
+    measured : rdlm
+    ideal    : rdli
+   metric :
+    measured : rdlw
+    ideal    : rdlx
+   short :
+    measured : rdly
+    ideal    : rdlz
+ table_types :
+  time_series :
+   table : aqvl
+  range_series :
+   table : aqft
+  spectra :
+   cs_kind : 32
+  radial : 
+   table      : lluv
+   descriptor : rdl
+   merged     : rdl
+   metric     : rdm
+  waves :
+   table      : wavl
+   descriptor : wvm
+  vectors :
+   table      : lluv
+   descriptor : tot
+  diagnostics : 
+   radial :
+    table      : rads
+    descriptor : rad
+   hardware :
+    table      : rcvr
+    descriptor : rcv
+   spectra :
+    table      : xspc
+    descriptor : spr
+   range :
+    table      : pcss
+    descriptor : rsp
+ pattern_types :
+   calibrated   : measured
+   uncalibrated : ideal
+ fileops :
+  directory_structure : 
+  move                : 0
+  unlink_archive_file : 0
+  unlink_found_file   : 0
+  archive_types       : [lvl, rng, rdli, rdlm, stat]
+  data_type_primary   : LLUV RDL9
+  data_type_secondary : measured
+  found_files         :
+  suffix              :
+  type                :
+  file_time_stamp     :
+  full_file_list      :
+ directories :
+  base           : /codar/seasonde
+  radial_configs : /codar/seasonde/configs/radialconfigs
+  combine_configs : /codar/seasonde/configs/combineconfigs
+  combine_processing : /codar/seasonde/configs/processings
+  data         : /codar/seasonde/data
+  radial_sites : /codar/seasonde/data/radialsites/site_
+  vectors      : /codar/seasonde/data/totals
+  search       : .
+  base_archive : /codar/seasonde/archives
+  archive      : 
