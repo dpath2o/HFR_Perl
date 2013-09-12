@@ -1,13 +1,8 @@
 ---
 misc :
- use_imos: 1
- use_qc  : 0
- verbose : 1
- debug   : 0
-
-globals :
- seasonde_vector_directory : &seasonde_vector_directory
-  - sea-state
+ use_qc    : 0
+ verbose   : 1
+ debug     : 0
 
 codenames :
  sos                    : 
@@ -73,8 +68,13 @@ coverages :
  dt   : 7 #days
  files : 
   data_filename : coverage_data.xyz
+  cpt           : coverages.cpt
   full_path     :
   figure        :
+
+vectors :
+ files :
+  cpt : vec_1.5mac.cpt
 
 grid :
  xi         :
@@ -107,7 +107,6 @@ gmt :
    vec_text    : vec.xyz
    vec_grid    : vec.grd
    mask        : tmp.mask
-   legend      : legend.txt
    arrow_scale : arrow_scale.txt
  figures :
   projection       : 
@@ -125,11 +124,6 @@ gmt :
   vector_squares   : -Ss1.5c
   contours         : -C100
   scale_position   : 
-  legend_region    : -R
-  legend_position  : -D17c/8c/15c/1c/TC
-  legend_size      : -J
-  title_region     : -R0/20/0/20
-  title_size       : -JX30c
  regions :
   current : 
   turq    : -R113/115.75/-32.1/-29.9
@@ -149,32 +143,42 @@ NSCA :
   remote_host     : *goanna
   service         : 'ACORN - data transfer'
 
-acorn_server :
- hostname                  : acorn.jcu.edu.au
- user                      : acorn
- ssh_key                   : /users/codar/.ssh/id_rsa
- base_staging_directory    : /acorn/data/archive/real-time/staging
- base_incoming_directory   : /acorn/data/archive/real-time/incoming/radial
- seasonde_vector_directory : *seasonde_vector_directory
+acorn :
+ use                         : 0
+ hostname                    : acorn.jcu.edu.au
+ user                        : acorn
+ ssh_key                     : /users/codar/.ssh/id_rsa
+ base_staging_directory      : /acorn/data/archive/real-time/staging
+ base_incoming_directory     : /acorn/data/archive/real-time/incoming/radial
+ wera_vector_directory_qc    : gridded_1h-avg-current-map_QC
+ wera_vector_directory_nonqc : gridded_1h-avg-current-map_non-QC
+ seasonde_vector_directory   : vector
+ station_directory_qc        : radial_quality_controlled
+ station_directory_nonqc     : radial
+ directory_structure         : symd
+ filename                    :
+ list_of_filenames           :
 
-local_server :
+local :
+ use      : 0
  hostname : seasonde.jcu.edu.au
  user     : codar
  ssh_key  : /users/codar/.ssh/id_rsa
  directories :
-  base    : /volumes/data
-  data    : /volumes/data/hfr
-  configs : /volumes/data/etc/acorn
-  log     : /volumes/data/logs/acorn
-  gmt     : /volumes/data/.gmt
-  tmp     : /volumes/data/tmp/data
-  perl_bin: /volumes/data/gd/src/perl
+  ncf      : /volumes/data/tmp/data
+  base     : /volumes/data
+  data     : /volumes/data/hfr
+  configs  : /volumes/data/etc/acorn
+  log      : /volumes/data/logs/acorn
+  gmt      : /volumes/data/.gmt
+  tmp      : /volumes/data/tmp/data
+  perl_bin : /volumes/data/gd/src/perl/hfr/scripts
   figures : 
    base    : /volumes/data/figs/acorn
    current : 
 
-
-imos_data_portal :
+imos :
+ use                         : 1
  url_base                    : http://thredds.aodn.org.au/thredds/dodsC/IMOS/ACORN
  suffix                      : html
  wera_vector_directory_qc    : gridded_1h-avg-current-map_QC

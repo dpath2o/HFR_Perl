@@ -12,26 +12,6 @@ use HFR::ACORN;
 
 our $VERSION = '0.01';
 
-=head1 NAME
-
-HFR::ACORN::FileOps - The great new HFR::ACORN::FileOps!
-
-=head1 VERSION
-
-Version 0.01
-
-=cut
-
-=head1 SYNOPSIS
-
-=head1 EXPORT
-
-=head1 SUBROUTINES/METHODS
-
-=head2 define_full_path
-
-=cut
-
 ################################################################################
 sub define_full_path {
 
@@ -45,11 +25,11 @@ sub define_full_path {
 
           if ( $self->{misc}->{use_qc} ) { #qc
 
-          $directory_data_type = $self->{imos_data_portal}->{wera_vector_directory_qc};
+              $directory_data_type = $self->{imos}->{wera_vector_directory_qc};
 
           } else { #non-qc
 
-              $directory_data_type = $self->{imos_data_portal}->{wera_vector_directory_nonqc};
+              $directory_data_type = $self->{imos}->{wera_vector_directory_nonqc};
 
           }
 
@@ -57,11 +37,11 @@ sub define_full_path {
 
           if ( $self->{misc}->{use_qc} ) { #qc
 
-              $directory_data_type = $self->{imos_data_portal}->{seasonde_vector_directory};
+              $directory_data_type = $self->{imos}->{seasonde_vector_directory};
 
           } else { #non-qc
 
-              $directory_data_type = $self->{imos_data_portal}->{seasonde_vector_directory};
+              $directory_data_type = $self->{imos}->{seasonde_vector_directory};
 
           }
 
@@ -71,11 +51,11 @@ sub define_full_path {
 
       if ( $self->{misc}->{use_qc}) { #qc
 
-          $directory_data_type = $self->{imos_data_portal}->{station_directory_qc};
+          $directory_data_type = $self->{imos}->{station_directory_qc};
 
       } else { #non-qc
 
-          $directory_data_type = $self->{imos_data_portal}->{station_directory_nonqc};
+          $directory_data_type = $self->{imos}->{station_directory_nonqc};
 
       }
 
@@ -84,7 +64,7 @@ sub define_full_path {
   # DETERMINE WHICH SERVER
   if ( $self->{misc}->{use_imos} ) {
 
-      $self->{ncf}->{base_directory} = $self->{imos_data_portal}->{url_base};
+      $self->{ncf}->{base_directory} = $self->{imos}->{url_base};
 
   } else {
 

@@ -177,6 +177,21 @@ sub define_datestrs {
 
 }
 ################################################################################
+sub define_datestr_function {
+
+    my $t0 = shift;
+    my $tN = shift;
+
+    my ($yr0,$mo0,$dy0, $hr0,$mn0,$sc0, $doy0,$dow0,$dst0) = Localtime($t0);
+    my ($yrN,$moN,$dyN, $hrN,$mnN,$scN, $doyN,$dowN,$dstN) = Localtime($tN);
+
+    my $t0_str = sprintf('%04d-%02d-%02d %02d:%02d',$yr0,$mo0,$dy0,$hr0,$mn0);
+    my $tN_str = sprintf('%04d-%02d-%02d %02d:%02d',$yrN,$moN,$dyN,$hrN,$mnN);
+
+    return ($t0_str,$tN_str);
+
+}
+################################################################################
 sub determine_delta_time {
 
   my $self = shift;

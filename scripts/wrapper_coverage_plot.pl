@@ -67,15 +67,16 @@ unless ( $tN >= ($t0+$dt) ) {
 # MAIN LOOP
 while ( $t0 < $tN ) {
 
-  my $sysstr = sprintf('%s/perl %s/coverage_plot.pl --sos=%s --start=%s --stop=%s',
-                       $acorn->{local_server}->{directories}->{perl_bin},
-                       $SN,
-                       $t0,
-                       ($t0+$dt)
-                      );
-  print "\n\n\n\nISSUING COMMAND:\n$sysstr\n\n";
-  system($sysstr);
-  $t0+=$dt;
+    my ($t0_str,$tN_str) = HFR::ACORN::define_datestr_function( $t0 , ($t0+$dt) );
+    my $sysstr = sprintf('perl %s/coverage_plot.pl --sos=%s --start=%s --stop=%s',
+                         $acorn->{local_server}->{directories}->{perl_bin},
+                         $SN,
+                         $t0_str,
+                         $tN_str
+                        );
+    print "\n\n\n\nISSUING COMMAND:\n$sysstr\n\n";
+    system($sysstr);
+    $t0+=$dt;
 
 }
 

@@ -163,8 +163,10 @@ sub write_coverages {
     my $ind0  = which($percs>0);
     my $lonG  = $self->{grid}->{longitudes};
     my $latG  = $self->{grid}->{latitudes};
+    print "$lonG\n\n";
     my $data_out = $percs($ind0);
     my $lonG_out = $lonG($ind0);
+    print "$lonG_out\n";
     my $latG_out = $latG($ind0);
     #$percs(which($percs==0)).=nan;
     $self->{coverages}->{data}  = $data_out;
