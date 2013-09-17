@@ -20,6 +20,7 @@ use YAML::XS qw(LoadFile);
 use Scalar::Util qw(looks_like_number);
 # HFR PACKAGES
 use HFR;
+use HFR::ACORN;
 use HFR::SeaSonde::ASCII;
 use HFR::SeaSonde::Binary;
 
@@ -63,8 +64,8 @@ sub new_operation {
    $self->{codar}->{fileops}->{unlink_found_file}   = $unlink_found_file;
    my $unlink_archive_file                          = exists $args{unlink_archive_file} ? $args{unlink_archive_file} : $self->{codar}->{fileops}->{unlink_archive_file};
    $self->{codar}->{fileops}->{unlink_archive_file} = $unlink_archive_file;
-   my $owner                                        = exists $args{owner} ? $args{owner} : $self->{local_server}->{user};
-   $self->{local_server}->{user}                    = $owner;
+   my $owner                                        = exists $args{owner} ? $args{owner} : $self->{local}->{user};
+   $self->{local}->{user}                    = $owner;
    my $debug                                        = exists $args{debug} ? $args{debug} : $self->{misc}->{debug};
    $self->{misc}->{debug}                           = $debug;
    my $verbose                                      = exists $args{verbose} ? $args{verbose} : $self->{misc}->{verbose};
@@ -83,9 +84,6 @@ sub read_radial_header_file {
 sub construct_file_list {
 
   my $self = shift;
-
-  # parse the datetime inputs
-  $self->HFR::determine_datetime;
 
   # if ascii then ...
   unless ( $self->{codar}->{fileops}->{data_type_primary} ~~ qw( cs ts rs spectra range_series time_series ) ) {
@@ -227,27 +225,27 @@ sub time_seconds_from_1904_to_time_number {
   my $self    = shift;
   my $time_in = shift;
 
-  # my $t_base  = DateTime->new(
-  #       		      year      => $self->{time}->{DateTime}->{year}, #1904,
-  #       		      month     => $self->{time}->{DateTime}->{month}, #1,
-  #       		      day       => $self->{time}->{DateTime}->{day}, #1,
-  #       		      hour      => $self->{time}->{DateTime}->{hour}, #0,
-  #       		      minute    => $self->{time}->{DateTime}->{minute}, #0,
-  #       		      second    => $self->{time}->{DateTime}->{second}, #0,
-  #       		      time_zone => $self->{time}->{DateTime}->{zone}, #'UTC',
-  #       		     );
+  my $t_base  = DateTime->new(
+        		      year      => $self->{time}->{DateTime}->{year}, #1904,
+        		      month     => $self->{time}->{DateTime}->{month}, #1,
+        		      day       => $self->{time}->{DateTime}->{day}, #1,
+        		      hour      => $self->{time}->{DateTime}->{hour}, #0,
+        		      minute    => $self->{time}->{DateTime}->{minute}, #0,
+        		      second    => $self->{time}->{DateTime}->{second}, #0,
+        		      time_zone => $self->{time}->{DateTime}->{zone}, #'UTC',
+        		     );
 
-  # my $tmp = DateTime::Format::Epoch::MacOS->new(
-  #       					epoch             => $t_base,
-  #       					unit              => $self->{time}->{DateTime}->{Epoch}->{unit}, #'seconds',
-  #       					type              => $self->{time}->{DateTime}->{Epoch}->{type}, #'int', # or 'float', 'bigint'
-  #       					skip_leap_seconds => $self->{time}->{DateTime}->{Epoch}->{skip_leap_seconds}, #1,
-  #       					start_at          => $self->{time}->{DateTime}->{Epoch}->{start_at}, #0,
-  #       					local_epoch       => $self->{time}->{DateTime}->{Epoch}->{local_epoch}, #undef,
-  #       				       );
+  my $tmp = DateTime::Format::Epoch::MacOS->new(
+        					epoch             => $t_base,
+        					unit              => $self->{time}->{DateTime}->{Epoch}->{unit}, #'seconds',
+        					type              => $self->{time}->{DateTime}->{Epoch}->{type}, #'int', # or 'float', 'bigint'
+        					skip_leap_seconds => $self->{time}->{DateTime}->{Epoch}->{skip_leap_seconds}, #1,
+        					start_at          => $self->{time}->{DateTime}->{Epoch}->{start_at}, #0,
+        					local_epoch       => $self->{time}->{DateTime}->{Epoch}->{local_epoch}, #undef,
+        				       );
 
-  # my $ts = $tmp->parse_datetime( $time_in );
-  my $ts = $self->mac_os_epoch( $time_in );
+  my $ts = $tmp->parse_datetime( $time_in );
+  # my $ts = $self->mac_os_epoch( $time_in );
 
   my $time_out = Mktime(
 			$ts->year,

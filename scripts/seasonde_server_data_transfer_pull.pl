@@ -6,16 +6,7 @@
 # Please see accompanying documentation before editing script to suit needs.
 #
 
-my $version = 1.2;
-
-################################################################################
-# MAC OS X 'launchd' REQUIREMENT
-use lib "/users/codar/goo/src/perl/modules/HFR-SeaSonde-FileOps/lib";
-use lib "/users/codar/goo/src/perl/modules/HFR-SeaSonde-ASCII/lib";
-use lib "/users/codar/goo/src/perl/modules/HFR-FileTransfer/lib";
-use lib "/users/codar/goo/src/perl/modules/HFR/lib";
-use lib "/users/codar/goo/src/perl/modules/HFR-Constants/lib";
-use lib "/users/codar/goo/src/perl/modules/HFR-SeaSonde-Binary/lib";
+my $version = 1.3;
 
 ################################################################################
 # LOAD MODULES/LIBRARIES
@@ -33,8 +24,8 @@ my ($help_msg,$verbose);
 my $result = GetOptions (
                          "v|verbose!" => \$verbose,
                          "h|help|?"   => \$help_msg
-                        ) or pod2usage(2);
-pod2usage({-verbose => 2, -output => \*STDOUT});
+                        );
+pod2usage({-verbose => 2, -output => \*STDOUT}) if ($help_msg);
 
 ################################################################################
 # INTIALISE YAML CONFIG
@@ -48,8 +39,8 @@ my $current_time = time-(3600*$hours_past);
 
 ################################################################################
 # LOG
-my $logit     = $params->{local_server}->{realtime}->{logit};
-my $log_file  = sprintf('%s/seasonde_server_data_transfer_pull.log',$params->{local_server}->{directories}->{log});
+my $logit     = $params->{local}->{realtime}->{logit};
+my $log_file  = sprintf('%s/seasonde_server_data_transfer_pull.log',$params->{local}->{directories}->{log});
 my $log       = new Log::LogLite( $log_file , 0 );
 
 ################################################################################
@@ -79,9 +70,9 @@ foreach my $station (@stations) {
   # default parameters; in case there are no radial files in the local directory
   my $last_radial_file = '';
   my $last_radial_time = time-(3600*24);
-#  my $table_type       = join(",",@{$params->{local_server}->{realtime}->{table_type}}); 
-  my $table_type       = $params->{local_server}->{realtime}->{table_type};
-  my $pattern_type     = $params->{local_server}->{realtime}->{pattern_type};
+#  my $table_type       = join(",",@{$params->{local}->{realtime}->{table_type}}); 
+  my $table_type       = $params->{local}->{realtime}->{table_type};
+  my $pattern_type     = $params->{local}->{realtime}->{pattern_type};
 
   # get last radial file and report back the last radial timestamp
   # we do this by opening the realtime radial directory and checking to see if there are any radial files in there at present
@@ -99,7 +90,7 @@ foreach my $station (@stations) {
       my @sorted = sort {-M "$radial_directory$a" <=> -M "$radial_directory$b"} @tmp_files; 
 
       # the last file is the file that is the last radial file
-      $last_radial_file = $radial_directory.'/'.$sorted[-1]; 
+      $last_radial_file = $radial_directory.'/'.$sorted[-1];
 
       # SKIP IF FOUND FILE IS SOMEHOW NOT A RADIAL FILE
       next unless (-f $last_radial_file);
@@ -125,7 +116,7 @@ foreach my $station (@stations) {
 							   stop                   => $current_time-3600,
 							   data_type_primary      => $table_type,
 							   data_type_secondary    => $pattern_type,
-							   base_archive_directory => $params->{acorn_server}->{base_incoming_directory},
+							   base_archive_directory => $params->{acorn}->{base_incoming_directory},
 							   directory_structure    => 'symd' );
 
       $seasonde->construct_file_list;
@@ -133,18 +124,18 @@ foreach my $station (@stations) {
       # loop over each file and attempt to download file
       foreach my $file (@{$seasonde->{codar}->{fileops}->{full_file_list}}) {
 
-	  my $msg = "Attempting to transfer: $file\nFrom: $params->{acorn_server}\n";
+	  my $msg = "Attempting to transfer: $file\nFrom: $params->{acorn}->{hostname}\n";
 	  $log->write( $msg , 6 ) if ($logit);
 	  print $msg if ($verbose==1);
 	  my $xfer = HFR::FileTransfer->new_transfer(
 	                                             source_file           => $file,
-      					       	     remote_host           => $params->{acorn_server}->{hostname},
+      					       	     remote_host           => $params->{acorn}->{hostname},
       	 					     destination_directory => $params->{codar}->{directories}->{radial_sites}.$station.'/',
       						     ssh_key_file          => $params->{ssh_key},
       						     log_file              => $log_file,
       						     logit                 => $logit,
       						     logger                => $log,
-      						     user                  => $params->{acorn_server}->{user},
+      						     user                  => $params->{acorn}->{user},
       						     verbose               => $params->{misc}->{verbose},
       						     debug                 => $params->{misc}->{debug} );
 
@@ -158,25 +149,25 @@ foreach my $station (@stations) {
 							   stop                   => $current_time-3600,
 							   data_type_primary      => $table_type,
 							   data_type_secondary    => $pattern_type,
-							   base_archive_directory => $params->{acorn_server}->{base_incoming_directory},
+							   base_archive_directory => $params->{acorn}->{base_incoming_directory},
 							   directory_structure    => 's' );
 
       $seasonde->construct_file_list;
 
       foreach my $file (@{$seasonde->{codar}->{fileops}->{full_file_list}}) {
 
-	  my $msg = "Attempting to transfer: $file\nFrom: $params->{acorn_server}\n";
+	  my $msg = "Attempting to transfer: $file\nFrom: $params->{acorn}->{hostname}\n";
 	  $log->write( $msg , 6 ) if ($logit);    
 	  print $msg if ($verbose==1);
 	  my $xfer = HFR::FileTransfer->new_transfer(
 	                                             source_file           => $file,
-      						     remote_host           => $params->{acorn_server}->{hostname},
+      						     remote_host           => $params->{acorn}->{hostname},
       	 					     destination_directory => $params->{codar}->{directories}->{radial_sites}.$station.'/',
       						     ssh_key_file          => $params->{ssh_key},
       						     log_file              => $log_file,
       						     logit                 => $logit,
       						     logger                => $log,
-      						     user                  => $params->{acorn_server}->{user},
+      						     user                  => $params->{acorn}->{user},
       						     verbose               => $params->{misc}->{verbose},
       						     debug                 => $params->{misc}->{debug} );
 
@@ -291,6 +282,11 @@ See L<Pod::Usage>
  08 July 2012
  Using Mac OS X U<launchd> to initialise script. At present 'brute force' loading of libraries from JCU Real-time SeaSonde server as using U<launchd> XML method fails.
  NOTE: this is not the preferred method and alternative approach to hard-wiring directory locations needs to be implemented.
+
+=item version 1.3
+
+ 17 September 2013
+ Minor changes made to accommodate for changes to acorn_perl.yml file
 
 =back
 
