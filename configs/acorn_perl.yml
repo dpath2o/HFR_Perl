@@ -39,9 +39,10 @@ codenames :
  tannum_sands           : tan
 
 time :
- start :
- stop  :
- dt    :
+ start                     :
+ stop                      :
+ dt                        :
+ realtime_processing_delay : 2
  DateTime :
   year   : 1904
   month  : 1
@@ -90,7 +91,7 @@ gmt :
  bin_directory         : /usr/local/bin
  files :
   suffix        : eps
-  defaults      : /volumes/data/.gmt/gmt.conf
+  defaults      : /volumes/emu/.gmt/gmt.conf
   coverage_cpt  : coverages.cpt
   vector_cpt    : vec_1.5max.cpt
   bathymetry    : ETOPO1_Bed_g_gmt4.grd
@@ -164,17 +165,31 @@ local :
  hostname : seasonde.jcu.edu.au
  user     : codar
  ssh_key  : /users/codar/.ssh/id_rsa
+ realtime :
+  logit   : 1
+  ghed :
+   table_type   : 'lluv rdl9'
+   pattern_type : measured
+  lanc :
+   table_type   : 'lluv rdl9'
+   pattern_type : ideal
+  nocr :
+   table_type   : 'lluv rdl9'
+   pattern_type : measured
+  bfcv :
+   table_type   : 'lluv rdl9'
+   pattern_type : measured
  directories :
-  ncf      : /volumes/data/tmp/data
-  base     : /volumes/data
-  data     : /volumes/data/hfr
-  configs  : /volumes/data/etc/acorn
-  log      : /volumes/data/logs/acorn
-  gmt      : /volumes/data/.gmt
-  tmp      : /volumes/data/tmp/data
-  perl_bin : /volumes/data/gd/src/perl/hfr/scripts
+  ncf      : /volumes/emu/tmp/data
+  base     : /volumes/emu
+  data     : /volumes
+  configs  : /volumes/emu/etc
+  log      : /volumes/emu/logs
+  gmt      : /volumes/emu/.gmt
+  tmp      : /volumes/emu/tmp/data
+  perl_bin : /volumes/emu/gd/src/perl/hfr/scripts
   figures : 
-   base    : /volumes/data/figs/acorn
+   base    : /volumes/emu/figs/acorn
    current : 
 
 imos :
@@ -282,9 +297,9 @@ codar :
   move                : 0
   unlink_archive_file : 0
   unlink_found_file   : 0
-  archive_types       : [lvl, rng, rdli, rdlm, stat]
-  data_type_primary   : LLUV RDL9
-  data_type_secondary : measured
+  archive_types       : [lvl]
+  data_type_primary   : 
+  data_type_secondary : 
   found_files         :
   suffix              :
   type                :

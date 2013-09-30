@@ -18,6 +18,8 @@ use HFR::SeaSonde::ASCII;
 use HFR::FileTransfer;
 use Log::LogLite;
 
+use Data::Dumper;
+
 ################################################################################
 # INITIALISE AND GET INPUTS
 my ($help_msg,$verbose);
@@ -70,9 +72,8 @@ foreach my $station (@stations) {
   # default parameters; in case there are no radial files in the local directory
   my $last_radial_file = '';
   my $last_radial_time = time-(3600*24);
-#  my $table_type       = join(",",@{$params->{local}->{realtime}->{table_type}}); 
-  my $table_type       = $params->{local}->{realtime}->{table_type};
-  my $pattern_type     = $params->{local}->{realtime}->{pattern_type};
+  my $table_type       = $params->{local}->{realtime}->{$station}->{table_type};
+  my $pattern_type     = $params->{local}->{realtime}->{$station}->{pattern_type};
 
   # get last radial file and report back the last radial timestamp
   # we do this by opening the realtime radial directory and checking to see if there are any radial files in there at present

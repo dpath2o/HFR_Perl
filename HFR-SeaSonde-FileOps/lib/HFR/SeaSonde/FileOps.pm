@@ -52,9 +52,9 @@ sub new_operation {
    $self->{codar}->{directories}->{base_archive}    = $base_archive_directory;
    my $archive_types                                = exists $args{archive_types} ? $args{archive_types} : $self->{codar}->{fileops}->{archive_types};
    $self->{codar}->{fileops}->{archive_types}       = $archive_types;
-   my $data_type_primary                            = exists $args{data_type_primary} ? $args{data_type_primary} : $self->{codar}->{fileops}->{data_type_primary};
+   my $data_type_primary                            = exists $args{data_type_primary} ? $args{data_type_primary} : ' ';
    $self->{codar}->{fileops}->{data_type_primary}   = $data_type_primary;
-   my $data_type_secondary                          = exists $args{data_type_secondary} ? $args{data_type_secondary} : $self->{codar}->{fileops}->{data_type_secondary};
+   my $data_type_secondary                          = exists $args{data_type_secondary} ? $args{data_type_secondary} : ' ';
    $self->{codar}->{fileops}->{data_type_secondary} = $data_type_secondary;
    my $directory_structure                          = exists $args{directory_structure} ? $args{directory_structure} : $self->{codar}->{fileops}->{directory_sturcture};
    $self->{codar}->{fileops}->{directory_structure} = $directory_structure;
@@ -90,6 +90,8 @@ sub construct_file_list {
 
     # determine data type
     $self->file_parts_from_ascii_table_type_and_config_file( $self->{codar}->{fileops}->{data_type_primary} , $self->{codar}->{fileops}->{data_type_secondary} );
+
+    print Dumper $self->{codar}->{fileops}->{suffix}."\n";
 
     # put times into a more usable format
     my($yr0,$mo0,$md0, $hr0,$mn0,$sc0, $doy0,$dow0,$dst0) = Localtime( $self->{time}->{start} );
@@ -279,11 +281,10 @@ sub time_string_to_time_number {
 
   if ($yr < 1990 ) { # seasonde's data cannot be before this date as SeaSonde's did not exist as a commerical product before this year
 
-      
       return $time_out;
 
   } else {
-    
+
     return $time_out = Mktime($yr,$mo,$dy,$hr,$mn,$sc);
 
   }
@@ -312,9 +313,10 @@ sub file_parts_from_ascii_table_type_and_config_file {
   my $self             = shift;
   my $table_type       = shift;
   my $pattern_type     = shift;
-  my @tmp_table        = split(/\s+/,$table_type);
-  my $test_table       = $tmp_table[1];
-  my $test_field       = $tmp_table[2];
+  #my @tmp_table        = split(/\s+/,$table_type);
+  my ($test_table,$test_field) = $table_type =~ /(\w+)\s*(\w+)/i;
+  #my $test_table       = $tmp_table[1];
+  #my $test_field       = $tmp_table[2];
 
   # load in station configuration file
   my $config_file = $ENV{"HOME"}.'/acorn_perl_'.$self->{codenames}->{sos}.'.yml';
@@ -325,29 +327,38 @@ sub file_parts_from_ascii_table_type_and_config_file {
 
     $self->{codar}->{fileops}->{suffix} = $self->{codar}->{suffixes}->{radial}; #'.ruv';
 
-    # merged 
+    # merged
     if ( $test_field =~ /$self->{codar}->{table_types}->{radial}->{merged}\d/i ) { #rdl
 
       # delta time
       $self->{time}->{dt} = $sos_cfg->{header}->{radial}->{time}->{output_interval};
 
       # measured
-      if ( $pattern_type =~ /$self->{codar}->{pattern_types}->{calibrated}/i ) { $self->{codar}->{fileops}->{type} = $self->{codar}->{prefixes}->{radial}->{merged}->{measured}; # measured ... 'rdlm'
+      if ( $pattern_type =~ /$self->{codar}->{pattern_types}->{calibrated}/i ) { 
+
+          $self->{codar}->{fileops}->{type} = $self->{codar}->{prefixes}->{radial}->{merged}->{measured}; # measured ... 'rdlm'
 
       # ideal
-      } else { $self->{codar}->{fileops}->{type} = $self->{codar}->{prefixes}->{radial}->{merged}->{ideal}; } #'rdli'
-      
+      } else {
+
+          $self->{codar}->{fileops}->{type} = $self->{codar}->{prefixes}->{radial}->{merged}->{ideal}; } #'rdli'
+
     # metric
     } elsif ( $test_field =~ /$self->{codar}->{table_types}->{radial}->{metric}\d/i ) { #rdm
-      
+
       # delta time
       $self->{time}->{dt} = $sos_cfg->{cspro}->{time}->{averaging_period};
 
       # measured
-      if ( $pattern_type =~ /$self->{codar}->{pattern_types}->{calibrated}/i ) { $self->{codar}->{fileops}->{type} = $self->{codar}->{prefixes}->{radial}->{metric}->{measured}; # measured ... 'rdlw'
-      
+      if ( $pattern_type =~ /$self->{codar}->{pattern_types}->{calibrated}/i ) {
+
+          $self->{codar}->{fileops}->{type} = $self->{codar}->{prefixes}->{radial}->{metric}->{measured}; # measured ... 'rdlw'
+
       # ideal
-      } else { $self->{codar}->{fileops}->{type} = $self->{codar}->{prefixes}->{radial}->{metric}->{ideal}; } #'rdlx'
+      } else {
+
+          $self->{codar}->{fileops}->{type} = $self->{codar}->{prefixes}->{radial}->{metric}->{ideal}; } #'rdlx'
+
     }
 
   # radial diagnostic
@@ -379,7 +390,7 @@ sub file_parts_from_ascii_table_type_and_config_file {
     $self->{time}->{dt}                 = $sos_cfg->{extra}->{diagnostics}->{time}->{output_interval};
 
   # vector creation diagnostic
-  } elsif ( $test_table =~ /$self->{codar}->{table_types}->{diagnostics}->{vector}->{table}/i and $test_field =~ /$self->{codar}->{table_types}->{diagnostics}->{vector}->{descriptor}*/i ) { #pcss ... rsp
+  } elsif ( $test_table =~ /$self->{codar}->{table_types}->{vectors}->{table}/i and $test_field =~ /$self->{codar}->{table_types}->{vectors}->{descriptor}*/i ) { #pcss ... rsp
 
     $self->{codar}->{fileops}->{type}   = $self->{codar}->{prefixes}->{diagnostics}; #'stat';
     $self->{codar}->{fileops}->{suffix} = $self->{codar}->{suffixes}->{diagnostics}->{vector}; #'.ddt';
